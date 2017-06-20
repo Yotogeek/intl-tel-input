@@ -2,3 +2,280 @@ Hello,
 
 Here is a code example for people who would like to integrate JQuery Mask with intl-tel-input (see: also JSfiddle https://jsfiddle.net/Yotogeek/0vjphzaL/)
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+
+</head>
+
+
+<body>
+
+
+<div class="container" style="margin-bottom: 0px;padding-bottom: 0px;">
+
+
+
+
+
+          <div class="row" style="color:black;padding: 30px 20px 0px 20px;">
+
+            <div class="col-md-offset-4 col-md-4">
+
+                    <div class="form-group phone1">
+                      <input type="tel" class="form-control" name ="phone1" id="phone1" value="" placeholder="">
+                      <span class="hiden1bis">
+                      <input type="tel" class="hiden1 hide" id="hiden1" name="info1" value="" placeholder=""></span>
+                    </div>
+
+          </div>
+        </div>
+
+
+
+          <div class="row" style="color:black;padding: 0px 20px 20px 20px;">
+
+            <div class="col-md-offset-4 col-md-4">
+
+                    <div class="form-group phone2">
+                      <input type="tel" class="form-control" name ="phone2" id="phone2" value="" placeholder="">
+                      <span class="hiden2bis">
+                      <input type="tel" class="hiden2 hide" id="hiden2" name="info2" value="" placeholder=""></span>
+                    </div>
+
+          </div>
+        </div>
+
+
+
+
+</div>
+
+
+
+
+
+</body>
+
+
+</html>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/utils.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/css/intlTelInput.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/intlTelInput.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.js"></script>
+
+
+
+
+
+<script>
+
+
+/*##########################################################################*/
+/*##########################################################################*/
+/*##########################################################################*/
+
+
+
+var intelphone={initialCountry: "loool",
+  separateDialCode: true,
+  preferredCountries: ["fr", "us", "gb"],
+  autoPlaceholder: 'aggressive',
+  geoIpLookup: function(callback) {
+    $.get('https://ipinfo.io', function() {}, "jsonp").always(function(resp) {
+      var countryCode = (resp && resp.country) ? resp.country : "";
+      callback(countryCode);
+    });
+  },
+  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/utils.js"};
+
+
+
+
+var intelhide={
+  initialCountry: "looool",
+  dropdownContainer: 'body',
+  utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/utils.js"
+};
+
+
+
+function Hello(e, countryData,phone, hiden){
+
+  $(phone).val(''); //
+
+  console.log(countryData);
+  
+  var str1 = $(phone).attr('placeholder');
+
+  $(hiden).intlTelInput("setCountry", Object.values(countryData)[1]);
+  var yo = $(hiden).attr('placeholder');
+
+
+  yo = yo.replace('(','');
+  yo = yo.replace(')','');
+
+  var res = '';
+  var a = str1[0];
+  var i;
+
+  for (i = 0; i < yo.length; i++) { 
+    if(a==yo[i]){
+      res = yo.substr(i);
+      break;
+    }
+  }
+
+  var mask1 = res.replace(/[0-9]/g, 0);
+
+  $(phone).val('');
+  $(phone).unmask();
+  $(phone).mask(mask1);
+  $(phone).attr('placeholder', res);
+
+
+}
+
+function Blur(phone){
+
+  if(!$("#"+phone).intlTelInput("isValidNumber")) {
+      $("div."+phone).removeClass("has-success");
+      $("div."+phone).addClass("has-error");
+  }
+  else{
+
+    $("div."+phone).removeClass("has-error");
+    $("div."+phone).addClass("has-success");
+    }
+
+}
+
+
+
+
+/*###########################################################################*/
+/*###########################################################################*/
+/*###########################################################################*/
+
+/*###################################PHONE 1#################################*/
+
+
+
+$('input').parent(".hiden1bis").hide();
+
+
+var pays1=$("#hiden1").val();
+
+
+var intelphone1 = intelphone;
+intelphone1['initialCountry'] = pays1;
+
+var intelhide1 = intelhide;
+intelhide1['initialCountry'] = pays1;
+
+
+$("#hiden1").intlTelInput(intelhide1);
+$("#phone1").intlTelInput(intelphone1);
+
+var mask1 = $("#phone1").attr('placeholder').replace(/[0-9]/g, 0);
+
+
+$("#phone1").on("countrychange", function(e, countryData) {
+
+  Hello(e, countryData,"#phone1", "#hiden1");
+
+});
+
+
+
+
+$(document).ready(function(){
+
+  $('#phone1').mask(mask1);
+
+});
+
+
+var telInput1 = $("#phone1"),
+errorMsg = $("#error-msg"),
+validMsg = $("#valid-msg");
+
+telInput1.intlTelInput({utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/utils.js"});
+
+
+$( "#phone1" ).blur(function() {
+
+  Blur("phone1");
+  });
+
+
+
+
+/*###########################################################################*/
+/*###########################################################################*/
+/*###########################################################################*/
+
+/*###################################PHONE 2#################################*/
+
+
+$('input').parent(".hiden2bis").hide();
+
+
+var pays2=$("#hiden2").val();
+
+
+var intelphone2 = intelphone;
+intelphone2['initialCountry'] = pays2;
+
+var intelhide2 = intelhide;
+intelhide2['initialCountry'] = pays2;
+
+
+$("#hiden2").intlTelInput(intelhide2);
+$("#phone2").intlTelInput(intelphone2);
+
+var mask2 = $("#phone2").attr('placeholder').replace(/[0-9]/g, 0);
+
+
+$("#phone2").on("countrychange", function(e, countryData) {
+
+  Hello(e, countryData,"#phone2", "#hiden2");
+
+});
+
+
+
+
+
+$(document).ready(function(){
+
+  $('#phone2').mask(mask2);
+
+});
+
+
+var telInput2 = $("#phone2"),
+errorMsg = $("#error-msg"),
+validMsg = $("#valid-msg");
+
+telInput2.intlTelInput({utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.14/js/utils.js"});
+
+
+$( "#phone2" ).blur(function() {
+
+  Blur("phone2");
+  });
+
+
+</script>
